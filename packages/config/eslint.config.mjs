@@ -142,11 +142,12 @@ const reactRules = {
     ...reactNative.configs.all.rules,
     ...react.configs.recommended.rules,
     'react-hooks/react-compiler': 'error',
-    'react-native/no-raw-text': [2, { skip: ['MText'] }],
+    'react-native/no-raw-text': [2, { skip: ['MText', 'Button', 'MButton'] }],
     'react/react-in-jsx-scope': 'off',
 }
 
 export default tseslint.config(
+    { ignores: ['**/*.gen.*'] },
     {
         plugins: { 'eslint-seatbelt': seatbelt },
         rules: {
