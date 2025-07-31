@@ -24,6 +24,7 @@ const baseRules = {
     'no-var': 'error',
     'no-console': 'error',
     'no-unused-vars': 'off',
+    'arrow-body-style': ['error', 'as-needed'],
     'unused-imports/no-unused-imports': 'error',
     'unused-imports/no-unused-vars': [
         'warn',
@@ -57,6 +58,7 @@ const baseRules = {
     'unicorn/no-negated-condition': 'off',
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/filename-case': 'off',
+    'sonarjs/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/method-signature-style': 'error',
     // This rule is not compatible with CommonJS modules, which we use in some places: https://typescript-eslint.io/rules/no-require-imports/#usage-with-commonjs
@@ -71,16 +73,18 @@ const baseRules = {
             minimumDescriptionLength: 3,
         },
     ],
-    // Let's not enforce this rule this time around, it is too much noise in the codebase.
-    // '@typescript-eslint/explicit-function-return-type': [
-    //     'error',
-    //     {
-    //         allowExpressions: true,
-    //         allowHigherOrderFunctions: true,
-    //         allowTypedFunctionExpressions: true,
-    //         allowDirectConstAssertionInArrowFunctions: true,
-    //     },
-    // ],
+    'functional/immutable-data': [
+        'error',
+        {
+            ignoreAccessorPattern: [
+                '**.current', // This is needed for React refs.
+            ],
+            ignoreMapsAndSets: true,
+        },
+    ],
+    'functional/no-expression-statements': 'off',
+    'functional/functional-parameters': 'off',
+    'functional/no-return-void': 'off',
 }
 
 const typedRules = {
@@ -124,17 +128,16 @@ const typedRules = {
         'error',
         { ignoreStringArrays: true },
     ],
-    'functional/immutable-data': [
-        'error',
-        {
-            ignoreAccessorPattern: [
-                '**.current', // This is needed for React refs.
-            ],
-            ignoreMapsAndSets: true,
-        },
-    ],
-    'functional/no-expression-statements': 'off',
-    'functional/functional-parameters': 'off',
+    // Let's not enforce this rule this time around, it is too much noise in the codebase.
+    // '@typescript-eslint/explicit-function-return-type': [
+    //     'error',
+    //     {
+    //         allowExpressions: true,
+    //         allowHigherOrderFunctions: true,
+    //         allowTypedFunctionExpressions: true,
+    //         allowDirectConstAssertionInArrowFunctions: true,
+    //     },
+    // ],
 }
 
 const reactRules = {
@@ -170,7 +173,7 @@ export default tseslint.config(
     sonarjs.configs.recommended,
     functional.configs.recommended,
     functional.configs.stylistic,
-    functional.configs.disableTypeChecked,
+    // functional.configs.disableTypeChecked,
     pluginPromise.configs['flat/recommended'],
     eslintPluginUnicorn.configs.recommended,
     {
@@ -189,6 +192,7 @@ export default tseslint.config(
     {
         extends: [
             importX.flatConfigs.typescript,
+            // functional.configs.recommended,
             functional.configs.externalTypeScriptRecommended,
             tseslint.configs.strictTypeCheckedOnly,
             tseslint.configs.stylisticTypeCheckedOnly,
