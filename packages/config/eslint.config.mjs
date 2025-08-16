@@ -1,23 +1,26 @@
+import path from 'node:path'
+
+import babelParser from '@babel/eslint-parser'
+import { fixupPluginRules } from '@eslint/compat'
 import eslint from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import vitest from '@vitest/eslint-plugin'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import functional from 'eslint-plugin-functional'
+import { importX } from 'eslint-plugin-import-x'
 import pluginPreferArrowFunctions from 'eslint-plugin-prefer-arrow-functions'
+import pluginPromise from 'eslint-plugin-promise'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactNative from 'eslint-plugin-react-native'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import sonarjs from 'eslint-plugin-sonarjs'
 import eslintPluginUnicorn from 'eslint-plugin-unicorn'
 import unusedImports from 'eslint-plugin-unused-imports'
-import tseslint from 'typescript-eslint'
-import { fixupPluginRules } from '@eslint/compat'
-import { importX } from 'eslint-plugin-import-x'
-import reactNative from 'eslint-plugin-react-native'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import pluginPromise from 'eslint-plugin-promise'
 import seatbelt from 'eslint-seatbelt'
 import globals from 'globals'
-import path from 'node:path'
+import tseslint from 'typescript-eslint'
 
 const baseRules = {
     complexity: ['error', 20],
@@ -25,6 +28,8 @@ const baseRules = {
     'no-console': 'error',
     'no-unused-vars': 'off',
     'arrow-body-style': ['error', 'as-needed'],
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
     'unused-imports/no-unused-imports': 'error',
     'unused-imports/no-unused-vars': [
         'warn',
@@ -51,7 +56,9 @@ const baseRules = {
     'sonarjs/cognitive-complexity': ['error', 20],
     'sonarjs/slow-regex': 'warn',
     'sonarjs/todo-tag': 'warn',
+    'sonarjs/fixme-tag': 'warn',
     'sonarjs/deprecation': 'warn',
+    'sonarjs/no-redundant-jump': 'off',
     'unicorn/no-array-callback-reference': 'off',
     'unicorn/no-array-for-each': 'off',
     'unicorn/no-array-reduce': 'off',
@@ -73,6 +80,9 @@ const baseRules = {
             minimumDescriptionLength: 3,
         },
     ],
+}
+
+const typedRules = {
     'functional/immutable-data': [
         'error',
         {
@@ -85,9 +95,7 @@ const baseRules = {
     'functional/no-expression-statements': 'off',
     'functional/functional-parameters': 'off',
     'functional/no-return-void': 'off',
-}
-
-const typedRules = {
+    '@typescript-eslint/no-deprecated': 'warn',
     '@typescript-eslint/consistent-type-exports': [
         'error',
         {
@@ -150,7 +158,7 @@ const reactRules = {
 }
 
 export default tseslint.config(
-    { ignores: ['**/*.gen.*'] },
+    { ignores: ['**/*.gen.*', '**/.wrangler'] },
     {
         plugins: { 'eslint-seatbelt': seatbelt },
         rules: {
@@ -172,8 +180,8 @@ export default tseslint.config(
     importX.flatConfigs.recommended,
     sonarjs.configs.recommended,
     functional.configs.recommended,
-    functional.configs.stylistic,
-    // functional.configs.disableTypeChecked,
+    functional.configs.externalVanillaRecommended,
+    functional.configs.disableTypeChecked,
     pluginPromise.configs['flat/recommended'],
     eslintPluginUnicorn.configs.recommended,
     {
@@ -181,8 +189,18 @@ export default tseslint.config(
             '@stylistic': stylistic,
             'prefer-arrow-functions': pluginPreferArrowFunctions,
             'unused-imports': unusedImports,
+            'simple-import-sort': simpleImportSort,
         },
+        settings: { 'import-x/core-modules': ['cloudflare:test'] },
         languageOptions: {
+            parser: babelParser,
+            parserOptions: {
+                requireConfigFile: false,
+                babelOptions: {
+                    babelrc: false,
+                    configFile: false,
+                },
+            },
             globals: {
                 ...globals.node,
             },
@@ -192,12 +210,13 @@ export default tseslint.config(
     {
         extends: [
             importX.flatConfigs.typescript,
-            // functional.configs.recommended,
+            functional.configs.recommended, // Overrides functional.configs.disableTypeChecked for files with type information.
+            functional.configs.stylistic, // At the time of writing, all stylistic rules require type information.
             functional.configs.externalTypeScriptRecommended,
             tseslint.configs.strictTypeCheckedOnly,
             tseslint.configs.stylisticTypeCheckedOnly,
         ],
-        files: ['**/*.{ts,tsx,js,jsx}'],
+        files: ['**/*.{ts,tsx}'],
         languageOptions: {
             parser: tsParser,
             ecmaVersion: 'latest',
@@ -207,16 +226,12 @@ export default tseslint.config(
                 tsconfigRootDir: import.meta.dirname,
             },
         },
-        rules: typedRules,
-    },
-    {
-        files: ['**/*.tsx'],
         plugins: {
             react,
             'react-hooks': reactHooks,
             'react-native': fixupPluginRules(reactNative),
         },
-        rules: reactRules,
+        rules: { ...typedRules, ...reactRules },
     },
     {
         files: ['**/*.{spec,test}.{ts,tsx}'],
