@@ -161,6 +161,11 @@ export default tseslint.config(
     { ignores: ['**/*.gen.*', '**/.wrangler'] },
     {
         plugins: { 'eslint-seatbelt': seatbelt },
+        settings: {
+            seatbelt: {
+                threadsafe: true,
+            },
+        },
         rules: {
             'eslint-seatbelt/configure': [
                 'error',
