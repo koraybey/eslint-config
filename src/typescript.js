@@ -1,4 +1,5 @@
 import tsParser from "@typescript-eslint/parser";
+import { defineConfig } from "eslint/config";
 import functional from "eslint-plugin-functional";
 import { importX } from "eslint-plugin-import-x";
 import tseslint from "typescript-eslint";
@@ -67,25 +68,23 @@ const typescriptRules = {
   ],
 };
 
-export default [
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      importX.flatConfigs.typescript,
-      functional.configs.recommended,
-      functional.configs.stylistic,
-      functional.configs.externalTypeScriptRecommended,
-      tseslint.configs.strictTypeCheckedOnly,
-      tseslint.configs.stylisticTypeCheckedOnly,
-    ],
-    languageOptions: {
-      parser: tsParser,
-      ecmaVersion: "latest",
-      sourceType: "module",
-      parserOptions: {
-        projectService: true,
-      },
+export default defineConfig({
+  files: ["**/*.{ts,tsx}"],
+  extends: [
+    importX.flatConfigs.typescript,
+    functional.configs.recommended,
+    functional.configs.stylistic,
+    functional.configs.externalTypeScriptRecommended,
+    tseslint.configs.strictTypeCheckedOnly,
+    tseslint.configs.stylisticTypeCheckedOnly,
+  ],
+  languageOptions: {
+    parser: tsParser,
+    ecmaVersion: "latest",
+    sourceType: "module",
+    parserOptions: {
+      projectService: true,
     },
-    rules: typescriptRules,
   },
-];
+  rules: typescriptRules,
+});
