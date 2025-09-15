@@ -1,5 +1,6 @@
 import tsParser from "@typescript-eslint/parser";
 import { defineConfig } from "eslint/config";
+import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
 import functional from "eslint-plugin-functional";
 import { importX } from "eslint-plugin-import-x";
 import tseslint from "typescript-eslint";
@@ -70,6 +71,11 @@ const typescriptRules = {
 
 export default defineConfig({
   files: ["**/*.{ts,tsx}"],
+  settings: {
+    "import-x/resolver-next": [
+      createTypeScriptImportResolver({ alwaysTryTypes: true }),
+    ],
+  },
   extends: [
     importX.flatConfigs.typescript,
     functional.configs.recommended,

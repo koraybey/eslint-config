@@ -1,7 +1,7 @@
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import functional from "eslint-plugin-functional";
-import { importX } from "eslint-plugin-import-x";
+import { createNodeResolver, importX } from "eslint-plugin-import-x";
 import pluginPreferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import pluginPromise from "eslint-plugin-promise";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
@@ -74,7 +74,9 @@ export default [
       "unused-imports": unusedImports,
       "prefer-arrow-functions": pluginPreferArrowFunctions,
     },
-    settings: { "import-x/core-modules": ["cloudflare:test"] },
+    settings: {
+      "import-x/resolver-next": [createNodeResolver()],
+    },
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
