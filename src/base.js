@@ -5,7 +5,6 @@ import { createNodeResolver, importX } from "eslint-plugin-import-x";
 import pluginPreferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import pluginPromise from "eslint-plugin-promise";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
-import sonarjs from "eslint-plugin-sonarjs";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
@@ -14,6 +13,7 @@ const baseRules = {
   complexity: ["error", 20],
   "no-var": "error",
   "no-console": "error",
+  "no-unused-vars": "off", // handled by unused-imports
   "arrow-body-style": ["error", "as-needed"],
   // eslint-plugin-simple-import-sort
   "simple-import-sort/imports": "error",
@@ -42,15 +42,8 @@ const baseRules = {
       singleReturnOnly: false,
     },
   ],
-  // eslint-plugin-sonarjs overrides
-  "sonarjs/cognitive-complexity": ["error", 20],
-  "sonarjs/slow-regex": "warn",
-  "sonarjs/todo-tag": "warn",
-  "sonarjs/fixme-tag": "warn",
-  "sonarjs/deprecation": "warn",
-  "sonarjs/no-redundant-jump": "off",
-  "sonarjs/no-unused-vars": "off", // handled by unused-imports
   // eslint-plugin-unicorn overrides
+  "unicorn/no-abusive-eslint-disable": "warn",
   "unicorn/no-array-callback-reference": "off",
   "unicorn/no-array-for-each": "off",
   "unicorn/no-array-reduce": "off",
@@ -62,7 +55,6 @@ const baseRules = {
 export default [
   eslint.configs.recommended,
   importX.flatConfigs.recommended,
-  sonarjs.configs.recommended,
   functional.configs.recommended,
   functional.configs.externalVanillaRecommended,
   functional.configs.disableTypeChecked,

@@ -56,6 +56,7 @@ const typescriptRules = {
     { ignoreStringArrays: true },
   ],
   "@typescript-eslint/method-signature-style": "error",
+  "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/no-require-imports": "off",
   "@typescript-eslint/ban-ts-comment": [
     "error",
@@ -81,8 +82,8 @@ export default defineConfig({
     functional.configs.recommended,
     functional.configs.stylistic,
     functional.configs.externalTypeScriptRecommended,
-    tseslint.configs.strictTypeCheckedOnly,
-    tseslint.configs.stylisticTypeCheckedOnly,
+    tseslint.configs.strictTypeChecked,
+    tseslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
     parser: tsParser,

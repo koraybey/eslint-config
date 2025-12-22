@@ -13,5 +13,8 @@ export default [
     files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: { react, "react-hooks": reactHooks },
     rules: reactRules,
+    settings: {
+      react: { version: "detect" },
+    },
   },
 ];
